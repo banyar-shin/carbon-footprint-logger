@@ -49,22 +49,24 @@ def cal_carbon_footprint():
 
     choice = input("Would you like to return to the home page? (y/n) ")
 
+    print("Sending you back...")
+    time.sleep(2)
     os.system('clear')
 
     return total, choice
 
 def general_info():
     print("Sorry! This page is still under construction.")
+    
     print("Sending you back...")
     time.sleep(2)
-
     os.system('clear')
 
 def general_tips():
     print("Sorry! This page is still under construction.")
+    
     print("Sending you back...")
     time.sleep(2)
-
     os.system('clear')
 
 def home_page():
