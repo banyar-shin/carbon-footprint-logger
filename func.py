@@ -8,6 +8,9 @@ def mul(x, y):
     z = x * y
     return z
 
+def new_user():
+    ans = input("Are you a new user? (y/n): ")
+
 def cal_carbon_footprint():
     ELECGAS = 105
     OIL = 113
@@ -72,10 +75,11 @@ def general_tips():
 def home_page():
     choice = int(input('''
     Hello! What do you want to do?
-    1) General Information
-    2) Carbon Footprint Calculator
-    3) General Tips
-    4) Quit
+    1) Login (Existing User)
+    2) Sign-Up (New User)
+    3) General Information
+    4) General Tips
+    5) Quit
     Enter a number: '''))
 
     os.system('clear')
