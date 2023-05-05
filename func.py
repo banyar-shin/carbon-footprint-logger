@@ -1,6 +1,3 @@
-#reference: https://justenergy.com/blog/how-to-calculate-your-carbon-footprint/ 
-#we referred to the given formulas on this website to help calculate the carbon footprint
-
 import os
 import time
 
