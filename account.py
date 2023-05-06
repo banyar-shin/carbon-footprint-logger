@@ -17,7 +17,7 @@ class UserAccount:
         self.__userID = userID
 
     def assignID(self):
-        #opening file to access data
+        #opening file to 
         file = open("users.csv", "r")
         data = list(csv.DictReader(file, delimiter=","))
         file.close()
@@ -26,7 +26,7 @@ class UserAccount:
         size += 1
 
         userid = str(size)
-        zeroes_to_add = 6 - len(userid)
+        zeroes_to_add = 7 - len(userid)
 
         zeroes = "0" * zeroes_to_add
 
