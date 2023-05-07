@@ -1,1 +1,2 @@
-userid,carbon_emitted_transport,carbon_emitted_food
+userid,publicmiles,ownmiles,carmpg,diettype,carbonemittedtoday
+000000,0,34,22,average,20.6

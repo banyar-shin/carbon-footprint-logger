@@ -3,6 +3,17 @@ import time
 from account import UserAccount
 import logger
 
+def get_int():
+    x = input("Enter an integer: ") # ask user for input
+    while True: # while there is input,
+        try:  # try this line
+            int(x)  # check if input is integer
+        except ValueError: # if there is type error,
+            print("\033[A\033[A")
+            x = input("Invalid, only enter an integer: ") # ask for input again
+        else: # if not,
+            return x  # return the input
+
 def get_input(choices):
     choice = input("Enter a number: ")
     while True:
@@ -78,20 +89,29 @@ def carbon_logger():
     if signedin == True:
         userid, username, password = logger.read_in_user()
         currentuser.set_user(userid, username, password)
+        currentuser.get_friends()
     else:
         choice2 = logger.login_or_signup()
         if choice2 == 1:
             currentuser.login_username()
-            currentuser.login_password()
+            choice2 = currentuser.login_password()
+            if choice2 == 0:
+                return choice2
+            currentuser.stay_signed_in()
             currentuser.get_friends()
+            currentuser.get_settings()
         elif choice2 == 2:
             currentuser.signup_username()
             currentuser.signup_password()
             currentuser.assignID()
             currentuser.save_user()
-            return 3
+            currentuser.stay_signed_in()
+            currentuser.set_settings()
         elif choice2 == 3:
-            return choice2
+            return 0
+    
+    choice = logger.menu(currentuser, 0)
+    return choice
 
 def main_menu(choice):
     while True:

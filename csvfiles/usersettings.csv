@@ -1,1 +1,3 @@
-user_id,saved_types,household_size,house_size,household_income
+userid,public,savedvehicle,household,recycle
+000000,0,22,3,0
+000001,0,25,3,1

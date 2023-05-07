@@ -2,6 +2,7 @@ import csv
 import string
 import os
 import time
+import func
 
 class UserAccount:
 	__userid = "\0"
@@ -24,16 +25,21 @@ class UserAccount:
 		self.__username = username
 		self.__password = password
 	
-	def print_user(self):
-		print(self.__userid, self.__username, self.__password)
+	def get_userid(self):
+		return self.__userid
 
-	def assignID(self):
+	def get_username(self): # define function to 
+		return self.__username
+	
+	def return_settings(self): # define function to return user settings
+		return self.__settings
+
+	def assignID(self): # define function to assign id to a new user
 		file = open("csvfiles/users.csv", "r") # opening the users file
 		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 		file.close() # closing the file
 		
 		size = len(data) # the size depends on the number of data entries in the file
-		size += 1 # the size increments by one with each new user
 
 		userid = str(size) # making the userid a string
 		zeros_to_add = 6 - len(userid) # subtracting the number of digits, 7, from the length of the userid
@@ -42,7 +48,7 @@ class UserAccount:
 
 		self.__userid = zeros + userid # returning the zeros and userid
 
-	def signup_username(self): # ask for username and sets it
+	def signup_username(self): # define function to set a username and validates
 		file = open("csvfiles/users.csv", "r") # opening the users file
 		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 		file.close() # closing the file
@@ -102,7 +108,7 @@ Enter the username again: ''') # ask the user for input again
 
 					self.__username = username # return the username
 	
-	def signup_password(self): # define the function to set a password and validate
+	def signup_password(self): # define function to set a password and validate
 		letters = set(string.ascii_letters) # create the set for all alphabets
 		upper = set(string.ascii_uppercase) # create the set for uppercase letters
 		lower = set(string.ascii_lowercase) # create the set for lower letters
@@ -169,20 +175,158 @@ Enter the password: ''') # ask the user for input again
 				else:
 					condition = "invalid"
 
-	def login_username(self):
+	def set_settings(self): # define function to set the user's settings
+		file = open("csvfiles/usersettings.csv", "r") # opening the settings file
+		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+		file.close() # closing the file
+
+		mydict = {
+			'userid': self.__userid,
+			'public': '0',
+			'savedvehicle': 'none',
+			'household': '0',
+			'recycle': '0',
+					}
+		os.system('clear')
+		print('''
+Now, we will be setting your preferences.
+
+Do you use public transportation regularly?
+1) Yes
+2) No
+''')
+		choices = {"1","2"}
+		choice = func.get_input(choices)
+		if choice == 1:
+			mydict['public'] = '1'
+
+		os.system('clear')
+		print('''
+Do you use have your own car or motorcycle?
+1) Yes
+2) No
+''')
+		choices = {"1","2"}
+		choice = func.get_input(choices)
+		if choice == 1:
+			os.system('clear')
+			print('''
+How many miles per gallon do you get?
+Range of answers: 5 - 120.
+
+Typical MPGs:
+- Motorcycle: 45
+- Car/Sedan/SUV: 23
+- Light Truck/Van: 17
+- Delivery Truck: 12
+''')
+			mpgs = set()
+			for i in range(5,121):
+				mpgs.add(str(i))
+			savedvehicle = func.get_input(mpgs)
+			mydict['savedvehicle'] = savedvehicle
+		
+		os.system('clear')
+		print('''
+What is the size of your household?
+Range of answers: 1 - 6 (Use 6 for 6 or more).
+''')
+		choices = {"1","2","3","4","5","6"}
+		household = func.get_input(choices)
+
+		mydict['household'] = household
+	
+		os.system('clear')
+		print('''
+Do you recycle items such as metal, plastic, glass, or paper?
+
+1) Yes
+2) No
+''')
+		choices = {"1","2"}
+		choice = func.get_input(choices)
+		if choice == 1:
+			mydict['recycle'] = '1'
+		
+		self.__settings = mydict
+
+		for element in data:
+			if element['userid'] == self.__userid:
+				data.remove(element)
+
+		data.append(mydict)
+
+		header = ['userid','public','savedvehicle','household','recycle']
+		with open("csvfiles/usersettings.csv", 'w') as csvfile: # opening the users signed in file
+			writer = csv.DictWriter(csvfile, fieldnames = header) # writing a csv file to the dictionary
+			writer.writeheader() # writes the first row in the file as a header
+			for element in data:
+				writer.writerow(element) # writes each inputted data into a row of the csv file
+		return 0
+
+	def get_settings(self): # define function to get existing user's settings
+		file = open("csvfiles/usersettings.csv", "r") # opening the settings file
+		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+		file.close() # closing the file
+
+		for element in data:
+			if element['userid'] == self.__userid:
+				self.__settings = {
+					'userid': self.__userid,
+					'public': element['public'],
+					'savedvehicle': element['savedvehicle'],
+					'household': element['household'],
+					'recycle': element['recycle'],
+				}
+				break
+
+	def login_username(self): # define function to use existing username
 		file = open("csvfiles/users.csv", "r") # opening the users file
 		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 		file.close() # closing the file
 
+		os.system('clear')
 		username = input('''
-To log in to your account,
-Please enter your username: ''') # ask the user for input
-		return
-		
-	def login_password(self):
-		return
+First, you'll need your username to log in.
 
-	def get_friends(self):
+Enter your username: ''') # ask the user for input
+		found = False
+		while found == False:
+			for element in data:
+				if username == element['username']:
+					self.__username = username
+					self.__userid = element['userid']
+					self.__password = element['password']
+					found = True
+					break
+			else:
+				os.system('clear')
+				username = input('''
+No existing account with such username found.
+
+Enter your username again: ''') # ask the user for input
+		
+	def login_password(self): # define function to use existing password
+		os.system('clear')
+		password = input('''
+Next, you'll need the password to your account.
+
+Enter your password: ''')
+		counter = 5
+		while True:
+			if counter == 1:
+				return 0
+			if password != self.__password:
+				counter -= 1
+				os.system('clear')
+				password = input(f'''
+Your password is wrong. You have {counter} more tries.
+
+Enter your password again: ''')
+			elif password == self.__password:
+				break
+
+	def get_friends(self): # define function to get friends into object
 		file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
 		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 		file.close() # closing the file
@@ -196,17 +340,19 @@ Please enter your username: ''') # ask the user for input
 					self.__incoming = element['incoming'].split("_") # set incoming requests
 				break
 		
-	def add_friends(self):
+	def add_friends(self): # define function to allow user to add friends
 		while True:
 			file = open("csvfiles/users.csv", "r") # opening the userfriends file
 			data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 			file.close() # closing the file
 
+			os.system('clear')
 			to_add = input('''
 Who would you like to add?
 Please enter their username: ''')
 			condition = True
 			while condition:
+				friend_id = " "
 				if to_add == 'done':
 					break
 				for element in data:
@@ -220,16 +366,19 @@ Please enter their username: ''')
 					break
 				elif condition:
 					if friend_id in self.__outgoing:
+						os.system('clear')
 						to_add = input('''
 There is already a pending request.
 
 Enter another username or 'done': ''')
 					elif friend_id in self.__friends:
+						os.system('clear')
 						to_add = input('''
 You are already friends with this user.
 
 Enter another username or 'done': ''')
 					else:
+						os.system('clear')
 						to_add = input('''
 Username does not exist.
 Enter another username or 'done': ''')
@@ -284,15 +433,20 @@ Enter another username or 'done': ''')
 			writer.writeheader() # writes the first row in the file as a header
 			for element in data:
 				writer.writerow(element) # writes each inputted data into a row of the csv file
+		return 0
 
-	def save_user(self):
+	def save_user(self): # define function to save user details to file
 		file = open("csvfiles/users.csv", "a") # opening the users file
 		to_write = "\n" + self.__userid + "," + self.__username + "," + self.__password # making a string for the user information
 		file.write(to_write) # appending the userid, username, and password to file
 		file.close() # closing the file
 
-	def stay_signed_in(self):
-		stay = input("Would you like to stay signed-in? (y/n): ") # asking user if they want to stay signed-in
+	def stay_signed_in(self): # define function to allow user to be signed in
+		os.system('clear')
+		stay = input('''
+Would you like to stay signed-in?
+
+Enter Y/N (or) y/n: ''') # asking user if they want to stay signed-in
 		if stay.lower() == "y": # if the user says yes
 			csv_headers = ['userid','username','password'] # setting the headers of the file
 			userdata = {'userid': self.__userid, 'username': self.__username, 'password': self.__password} # setting the data that will be stored into the file

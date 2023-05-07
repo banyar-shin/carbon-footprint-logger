@@ -8,13 +8,6 @@ class UserAccount:
 	__outgoing = list()
 	__incoming = list()
 	__settings = dict()
-
-	# 000002_000003_000005_000004 = string_of_friends
-
-	# dict = {
-	# 		'userid': self.__userid,
-	#    	'friends': string_of_friends,
-	# }
 	
 	def get_friends(self):
 		file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
