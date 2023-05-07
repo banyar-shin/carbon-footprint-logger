@@ -1,48 +1,123 @@
-import string #import string to use ascii sets for letter
+import csv
 
-def set_password(): #define the function
-	letters = set(string.ascii_letters)#create the set for all alphabets
-	upper = set(string.ascii_uppercase)#create the set for uppercase letters
-	lower = set(string.ascii_lowercase)#create the set for lower letters
-	numbers = {'0','1','2','3','4','5','6','7','8','9'} #create the set for numbers
-	symbols = {'!','@','#','$','?','*','%','&','~','_'}#create the set for symbols
-	password = input('''
-Password Requirements:
-- Must have at least 6 characters and at most 12 characters.
-- Must include at least one letter, one number and one symbol.
-Enter the password: ''')#Ask the user for input
+class UserAccount:
+	__userid = "000006"
+	__username = "aaronf"
+	__password = "Aaron52@"
+	__friends = ['000003']
+	__outgoing = list()
+	__incoming = list()
+	__settings = dict()
 
-	condition = "invalid" #set the condition for a while loop
-	while condition == "invalid": #while the condition is invalid, start the loop
-		if len(password) > 6 or len(password) < 12:#if the password length is greater 6 or less than 12
-			upper_counter = 0 #initialize the uppercase counter
-			lower_counter = 0 #initialize the lowercase counter
-			number_counter = 0 #initialize the number counter
-			for element in password: #read through each element in the password
-				if element in upper: #if the element is the uppercase
-					upper_counter += 1 #increment the uppercase counter
-				if element in lower: #if the element is the lowercase
-					lower_counter += 1 #increment the lowercase counter
-				if element in numbers: #if the element is the number
-					number_counter += 1 #increment the number counter
-			if upper_counter >= 1 and lower_counter >= 1 and number_counter >= 1: #if there is an uppercase, lowercase and the number in the password
-				base = pow(52,len(password)-2) * 62 * 72 #set the base 
-				com = 1 #initialize the combination of the password
-				for element in password: #read through every element in password
-					if element in letters: #if the element is a letter
-						com = com * 52 #com times 52
-					if element in numbers: #if the element is a number
-						com = com * 62 #com times 62
-					if element in symbols: #if the element is a symbol
-						com = com * 72 #com times 72
-				if com >= base: #if com is greater than or equl to base
-					condition = "valid" #set the condition to valid
-		if condition == "invalid": #if the condition is invalid
-			password = input('''
-Password is not strong enough, please try again.
-Enter the password: ''') #ask the user for input again
-		elif condition == "valid": #else if the condition is valid
-			print("You have successfully created a password!") #create the password
-			return password #return the password
+	# 000002_000003_000005_000004 = string_of_friends
 
-print(set_password())
+	# dict = {
+	# 		'userid': self.__userid,
+	#    	'friends': string_of_friends,
+	# }
+	
+	def get_friends(self):
+		file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
+		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+		file.close() # closing the file
+		for element in data: # read through each element of the data
+			if element['userid'] == self.__userid: # if the userid is in the list
+				if element['friends'].split("_") != ['']: # check if it empty
+					self.__friends = element['friends'].split("_") # set friends
+				if element['outgoing'].split("_") != ['']: # check if it empty
+					self.__outgoing = element['outgoing'].split("_") # set outgoing requests
+				if element['incoming'].split("_") != ['']: # check if it empty
+					self.__incoming = element['incoming'].split("_") # set incoming requests
+				break
+		
+	def add_friends(self):
+		while True:
+			file = open("csvfiles/users.csv", "r") # opening the userfriends file
+			data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+			file.close() # closing the file
+
+			to_add = input('''
+Who would you like to add?
+Please enter their username: ''')
+			condition = True
+			while condition:
+				if to_add == 'done':
+					break
+				for element in data:
+					if element['username'] == to_add and to_add != self.__username: #if the username existed
+						friend_id = element['userid']
+						if friend_id not in self.__outgoing and friend_id not in self.__friends:
+							self.__outgoing.append(friend_id)
+							condition = False
+							break
+				if to_add == 'done':
+					break
+				elif condition:
+					if friend_id in self.__outgoing:
+						to_add = input('''
+There is already a pending request.
+
+Enter another username or 'done': ''')
+					elif friend_id in self.__friends:
+						to_add = input('''
+You are already friends with this user.
+
+Enter another username or 'done': ''')
+					else:
+						to_add = input('''
+Username does not exist.
+Enter another username or 'done': ''')
+			if to_add == 'done':
+				break
+		
+			file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
+			data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+			file.close() # closing the file
+
+			for element in data:
+				if element['userid'] == friend_id:
+					incoming_entry = element
+					if element['incoming'].split("_") != ['']:
+						incoming_list = element['incoming'].split("_")
+					else:
+						incoming_list = list()
+					data.remove(element)
+					break
+			
+			incoming_list.append(self.__userid)
+			incoming_str = '_'.join(incoming_list)
+			incoming_entry['incoming'] = incoming_str
+
+			data.append(incoming_entry)
+
+			header = ['userid', 'friends', 'outgoing', 'incoming']
+			with open("csvfiles/userfriends.csv", 'w') as csvfile: # opening the users signed in file
+				writer = csv.DictWriter(csvfile, fieldnames = header) # writing a csv file to the dictionary
+				writer.writeheader() # writes the first row in the file as a header
+				for element in data:
+					writer.writerow(element) # writes each inputted data into a row of the csv file
+
+		file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
+		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+		file.close() # closing the file
+
+		for element in data:
+			if element['userid'] == self.__userid:
+				outgoing_entry = element
+				data.remove(element)
+				break
+
+		outgoing_str = '_'.join(self.__outgoing)
+		outgoing_entry['outgoing'] = outgoing_str
+
+		data.append(outgoing_entry)
+
+		header = ['userid', 'friends', 'outgoing', 'incoming']
+		with open("csvfiles/userfriends.csv", 'w') as csvfile: # opening the users signed in file
+			writer = csv.DictWriter(csvfile, fieldnames = header) # writing a csv file to the dictionary
+			writer.writeheader() # writes the first row in the file as a header
+			for element in data:
+				writer.writerow(element) # writes each inputted data into a row of the csv file
+
+currentuser = UserAccount()
+currentuser.add_friends()
