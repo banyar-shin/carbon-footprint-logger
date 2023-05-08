@@ -14,11 +14,13 @@ class UserAccount:
 	__settings = dict()
 
 	def __init__(self):
-		self.__userid = "\0"
-		self.__username = "\0"
-		self.__password = "\0"
-		self.__friends = set()
-		self.__settings = dict()
+		__userid = "\0"
+		__username = "\0"
+		__password = "\0"
+		__friends = list()
+		__outgoing = list()
+		__incoming = list()
+		__settings = dict()
 	
 	def set_user(self, userid, username, password):
 		self.__userid = userid
@@ -350,15 +352,20 @@ Enter your password again: ''')
 				break
 		
 	def add_friends(self): # define function to allow user to add friends
+		to_add = ''
 		while True:
+			if to_add == 'done':
+				break
 			file = open("csvfiles/users.csv", "r") # opening the userfriends file
 			data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 			file.close() # closing the file
-
 			os.system('clear')
 			to_add = input('''
 Who would you like to add?
-Please enter their username: ''')
+
+Please enter their username or 'done': ''')
+			if to_add == 'done':
+				break
 			condition = True
 			while condition:
 				friend_id = " "
@@ -444,9 +451,154 @@ Enter another username or 'done': ''')
 				writer.writerow(element) # writes each inputted data into a row of the csv file
 		return 0
 
-	# def pending_requests(self):
-	# 	for element in self.__incoming:
-			
+	def pending_requests(self): # define funtion to allow user to accept pending requests
+		file = open("csvfiles/users.csv", "r") # opening the userfriends file
+		users = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+		file.close() # closing the file
+		
+		mylist = self.__incoming
+
+		if len(mylist) != 0:
+			for element in users:
+				for person in mylist:
+					if person == element['userid']:
+						os.system('clear')
+						print(f'''					
+{element['username']} wants to add you!
+
+1) Accept Friend Request
+2) Deny Friend Request
+''')
+						choices = {"1","2"}
+						choice = func.get_input(choices)
+
+						if choice == 1:
+							file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
+							data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+							file.close() # closing the file
+							
+							for element2 in data:
+								if person == element2['userid']:
+									outgoing_entry = element2
+									if element2['outgoing'].split("_") != ['']:
+										outgoing_list = element2['outgoing'].split("_")
+									if element2['friends'].split("_") != ['']:
+										friends_list = element2['friends'].split("_")
+									else:
+										friends_list = list()
+										outgoing_list = list()
+									data.remove(element2)
+									break
+							
+							for element2 in outgoing_list:
+								if element2 == self.__userid:
+									outgoing_list.remove(element2)
+									break
+							outgoing_str = '_'.join(outgoing_list)
+							outgoing_entry['outgoing'] = outgoing_str
+
+							friends_list.append(self.__userid)
+							friends_str = '_'.join(friends_list)
+	
+							outgoing_entry['friends'] = friends_str
+
+							data.append(outgoing_entry)
+
+							for element in data:
+								if element['userid'] == self.__userid:
+									data.remove(element)
+									break
+									
+							self.__friends.append(person)
+							self.__incoming.remove(person)
+
+							friends_str = '_'.join(self.__friends)
+							incoming_str = '_'.join(self.__incoming)
+							outgoing_str = '_'.join(self.__outgoing)
+
+							incoming_entry = {
+								'userid': self.__userid,
+								'friends': friends_str,
+								'outgoing': outgoing_str,
+								'incoming': incoming_str 
+							}
+							
+							data.append(incoming_entry)
+
+							header = ['userid', 'friends', 'outgoing', 'incoming']
+							with open("csvfiles/userfriends.csv", 'w') as csvfile: # opening the users signed in file
+								writer = csv.DictWriter(csvfile, fieldnames = header) # writing a csv file to the dictionary
+								writer.writeheader() # writes the first row in the file as a header
+								for element in data:
+									writer.writerow(element) # writes each inputted data into a row of the csv file
+									
+						if choice == 2:
+							file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
+							data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+							file.close() # closing the file
+							
+							for element2 in data:
+								if person == element2['userid']:
+									outgoing_entry = element2
+									if element2['outgoing'].split("_") != ['']:
+										outgoing_list = element2['outgoing'].split("_")
+									else:
+										outgoing_list = list()
+									data.remove(element2)
+									break
+							
+							for element2 in outgoing_list:
+								if element2 == self.__userid:
+									outgoing_list.remove(element2)
+									break
+							outgoing_str = '_'.join(outgoing_list)
+							outgoing_entry['outgoing'] = outgoing_str
+
+							data.append(outgoing_entry)
+
+							for element in data:
+								if element['userid'] == self.__userid:
+									data.remove(element)
+									break
+									
+							self.__incoming.remove(person)
+
+							friends_str = '_'.join(self.__friends)
+							incoming_str = '_'.join(self.__incoming)
+							outgoing_str = '_'.join(self.__outgoing)
+
+							incoming_entry = {
+								'userid': self.__userid,
+								'friends': friends_str,
+								'outgoing': outgoing_str,
+								'incoming': incoming_str 
+							}
+							
+							data.append(incoming_entry)
+
+							header = ['userid', 'friends', 'outgoing', 'incoming']
+							with open("csvfiles/userfriends.csv", 'w') as csvfile: # opening the users signed in file
+								writer = csv.DictWriter(csvfile, fieldnames = header) # writing a csv file to the dictionary
+								writer.writeheader() # writes the first row in the file as a header
+								for element in data:
+									writer.writerow(element) # writes each inputted data into a row of the csv file
+			os.system('clear')
+			print('''
+Those were all of the requests.
+
+Taking you back...
+	''')
+			time.sleep(2)
+			return 0
+		else:
+			os.system('clear')
+			print('''
+You have no incoming requests.
+
+Taking you back...
+	''')
+		time.sleep(2)
+		return 0
 
 	def save_user(self): # define function to save user details to file
 		file = open("csvfiles/users.csv", "a") # opening the users file

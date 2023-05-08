@@ -63,7 +63,7 @@ You are signed in as {currentuser.get_username()}.
 What would you like to do?
 1) Daily Logger
 2) Monthly Logger
-3) View/Edit Logs
+3) View Logs
 4) Friends
 5) Settings
 6) Log Out
@@ -141,7 +141,7 @@ Enter the date again (MM/DD/YYYY): ''') # telling user to correct the format of 
 					os.system('clear')
 					date = input('''
 There is already a log for this date.
-You may change this log in "View/Edit Logs".
+You may view this log in "View Logs".
 Please provide another date.
 
 Enter the date again (MM/DD/YYYY): ''') # tell the user to input a valid date, since it's in the future
@@ -307,7 +307,6 @@ Enter the month again (MM/YYYY): ''') # telling user to correct the format of th
 					os.system('clear')
 					date = input('''
 There is already a log for this month.
-You may change this log in "View/Edit Logs".
 Please provide another month.
 
 Enter the date again (MM/YYYY): ''') # tell the user to input a valid date, since it's in the future
@@ -431,7 +430,16 @@ Enter the date again (MM/DD/YYYY): ''') # telling user to correct the format of 
 					for element in data:
 						if date == element['date']:
 							found = True
-							mydict = element
+							os.system('clear')
+							print (f"Here's your data for {date}:\n")
+							if element['publicmiles'] != '0':
+								print("- Miles traveled using public transportation on this day: " + element['publicmiles'] + " miles.")
+							if element['ownmiles'] != '0':
+								print("- Miles driven on their own vehicle on this day: " + element['ownmiles'] + " miles.")
+							print(f'''- What their diet consisted of today: {element['diettype']} kilograms.
+	- Carbon dioxide emitted from food today: {element['carbondiet']} kilograms.
+	- Carbon dioxide emitted transportation today: {element['carbongas']} kilograms.
+	- Total carbon dioxide emitted today: {element['totalcarbon']} kilograms.''')
 							break
 					if found == True:
 						break
@@ -444,7 +452,6 @@ Please enter the date you'd like to see.
 
 Enter the date again (MM/DD/YYYY): ''') # telling user to correct the format of their date
 		
-			print(mydict)
 			print('''
 Would you like to view another log?
 
@@ -473,7 +480,7 @@ What would you like to do?
 3) Check Pending Requests
 4) Back to Main Menu
 ''')#print the menu
-	choices = {"1","2","3"} #create a dictionary for choices
+	choices = {"1","2","3","4"} #create a dictionary for choices
 	choice = func.get_input(choices) #get the choices from user
 	if choice == 1: #if choice is one
 		while True:
@@ -503,9 +510,12 @@ Enter their username: ''')
 				file = open(filename, "r") # open it in read mode
 				data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 				file.close() # closing the file
+				os.system('clear')
 				print("\nHere's today's data for your friend, " + userfriendsname + ":\n" )
+				found2 = False
 				for item in data:
 					if item['userid'] == friendsID:
+						found2 = True
 						if item['publicmiles'] != '0':
 							print("- Miles traveled using public transportation today: " + item['publicmiles'] + " miles.")
 						if item['ownmiles'] != '0':
@@ -513,8 +523,10 @@ Enter their username: ''')
 						print(f'''- What their diet consisted of today: {item['diettype']} kilograms.
 - Carbon dioxide emitted from food today: {item['carbondiet']} kilograms.
 - Carbon dioxide emitted transportation today: {item['carbongas']} kilograms.
-- Total carbon dioxide emitted today: {item['totalcarbon']} kilograms.
-
+- Total carbon dioxide emitted today: {item['totalcarbon']} kilograms.''')
+				if found == False:
+					print("Your friend has not logged their data today.")
+				print('''
 What would you like to do now?
 
 1) Another User
@@ -541,7 +553,12 @@ What would you like to do?
 				else:
 					continue
 	if choice == 2:#if 
-		currentuser.add_friends()
+		choice = currentuser.add_friends()
+		if choice == 0:
+			return 0
 	if choice == 3:
-		func.quit_program()
-		time.sleep(3)
+		choice = currentuser.pending_requests()
+		if choice == 0:
+			return 0
+	if choice == 4:
+		return 0
