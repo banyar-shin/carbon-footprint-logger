@@ -78,7 +78,8 @@ def quit_program():
     os.system('clear')
     print('''
 Thank you for using Carbon Logger!!
-Please come again!!
+
+You should come back again tomorrow!!
 ''')
 
 def carbon_logger():

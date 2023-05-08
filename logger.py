@@ -552,7 +552,7 @@ What would you like to do?
 					return 0
 				else:
 					continue
-	if choice == 2:#if 
+	if choice == 2: 
 		choice = currentuser.add_friends()
 		if choice == 0:
 			return 0
