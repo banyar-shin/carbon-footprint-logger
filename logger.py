@@ -451,7 +451,7 @@ You can make a day log in "Daily Logger".
 Please enter the date you'd like to see.
 
 Enter the date again (MM/DD/YYYY): ''') # telling user to correct the format of their date
-		
+						
 			print('''
 Would you like to view another log?
 
@@ -469,7 +469,7 @@ Would you like to view another log?
 		elif choice == 2:
 			return 0
 
-def friends_menu(currentuser):#this fucn let the user to add friends and check their daily logger
+def friends_menu(currentuser):#dispaly the menu and allow the user to check friends activities
 	os.system('clear')
 	print('''
 Here is where you can interact with your friends!
