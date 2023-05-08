@@ -44,13 +44,13 @@ def our_purpose():
     print('''
     The amount of carbon dioxide we put into the atmosphere directly affects and worsens climate change. It is a type of gas
 that is able to trap heat, engendering our planet to warm up. One of the main driving forces of these greenhouse gases is the 
-burning of fossil fuels, which is used towards transportation, the production of electricity, and the powering industries and our 
+burning of fossil fuels, which is used towards transportation, the production of electricity, and the powering of industries and our 
 homes, etc. Despite the use of fossil fuels providing us with advantages and giving more people jobs, the immense quantities of 
 carbon emissions that it produces is ultimately killing our planet.
 
-    With our concern of the evergrowing problem of carbon emissions, we have decided to create a program that spreads awareness 
+    With our concern of the ever growing problem of carbon emissions, we have decided to create a program that spreads awareness 
 of the issue and allows users to keep track of how much carbon dioxide that they are responsible for generating. By answering
-our daily questions, the user is able to find out their carbon footprint each day. In order to create a positive impact, there
+our daily and monthly questions, the user is able to find out their carbon footprint. In order to create a positive impact, there
 are small habits to develop that can be greatly beneficial.
 
     There are various ways and adjustments you can make in your daily life to help the environment. For instance, one of the
@@ -90,6 +90,7 @@ def carbon_logger():
         userid, username, password = logger.read_in_user()
         currentuser.set_user(userid, username, password)
         currentuser.get_friends()
+        currentuser.get_settings()
     else:
         choice2 = logger.login_or_signup()
         if choice2 == 1:

@@ -34,6 +34,9 @@ class UserAccount:
 	def return_settings(self): # define function to return user settings
 		return self.__settings
 
+	def return_friends(self): #a function to return the friends of the user
+		return self.__friends
+	
 	def assignID(self): # define function to assign id to a new user
 		file = open("csvfiles/users.csv", "r") # opening the users file
 		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
@@ -41,7 +44,7 @@ class UserAccount:
 		
 		size = len(data) # the size depends on the number of data entries in the file
 
-		userid = str(size) # making the userid a string
+		userid = str(size + 1) # making the userid a string
 		zeros_to_add = 6 - len(userid) # subtracting the number of digits, 7, from the length of the userid
 
 		zeros = "0" * zeros_to_add # the value from the above formula is the number of 0's that we want in front of the id
@@ -54,7 +57,8 @@ class UserAccount:
 		file.close() # closing the file
 
 		allowed = set(string.ascii_lowercase) # create the set for lower letters
-		allowed.add('_') # allow user to use underscore
+		allowed2 = {'1','2','3','4','5','6','7','8','9','_'}
+		allowed.update(allowed2)
 		os.system('clear')
 		username = input('''
 Please create your username.
@@ -103,7 +107,7 @@ Enter the username again: ''') # ask the user for input again
 				if condition == "valid": # if the condition is valid
 					print("\nYou have successfully chosen your username!")
 
-					time.sleep(2) # pauses for 2 seconds
+					time.sleep(0.75) # sleeps for 0.75 seconds
 					os.system('clear') # clear terminal
 
 					self.__username = username # return the username
@@ -127,7 +131,7 @@ Enter the password: ''') # Ask the user for input
 
 		condition = "invalid" # set the condition for a while loop
 		while condition == "invalid": # while the condition is invalid, start the loop
-			if len(password) > 6 and len(password) < 12: # if the password length is greater 6 and less than 12
+			if len(password) >= 6 and len(password) <= 12: # if the password length is greater 6 and less than 12
 				upper_counter = 0 # initialize the uppercase counter
 				lower_counter = 0 # initialize the lowercase counter
 				number_counter = 0 # initialize the number counter
@@ -169,7 +173,7 @@ Please confirm your password by re-entering it.
 Enter the password: ''') # ask the user for input again
 				if re_enter == password:
 					print("\nYou have successfully created a password!") # create the password
-					time.sleep(2) # sleeps for 2 seconds
+					time.sleep(0.75) # sleeps for 0.75 seconds
 					os.system('clear') # clears the terminal
 					self.__password = password # return the password
 				else:
@@ -262,6 +266,11 @@ Do you recycle items such as metal, plastic, glass, or paper?
 			writer.writeheader() # writes the first row in the file as a header
 			for element in data:
 				writer.writerow(element) # writes each inputted data into a row of the csv file
+
+		print("\nYou have successfully finished setting up!") # create the password
+		time.sleep(0.75) # sleeps for 0.75 seconds
+		os.system('clear') # clears the terminal
+
 		return 0
 
 	def get_settings(self): # define function to get existing user's settings
@@ -435,11 +444,43 @@ Enter another username or 'done': ''')
 				writer.writerow(element) # writes each inputted data into a row of the csv file
 		return 0
 
+	# def pending_requests(self):
+	# 	for element in self.__incoming:
+			
+
 	def save_user(self): # define function to save user details to file
 		file = open("csvfiles/users.csv", "a") # opening the users file
 		to_write = "\n" + self.__userid + "," + self.__username + "," + self.__password # making a string for the user information
 		file.write(to_write) # appending the userid, username, and password to file
 		file.close() # closing the file
+
+		filename = "datafiles/" + self.__userid + "daily.csv" # creating a file
+		file = open(filename, "x") # opening the users data 
+		file.close() # closing the file
+
+		filename = "datafiles/" + self.__userid + "monthly.csv" # creating a file
+		file = open(filename, "x") # opening the users data file
+		file.close() # closing the file
+
+		mydict = {
+			'userid': self.__userid,
+			'friends': '',
+			'outgoing': '',
+			'incoming': ''
+			}
+		
+		file = open("csvfiles/userfriends.csv", "r") # opening the userfriends file
+		data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
+		file.close() # closing the file
+
+		data.append(mydict)
+
+		header = ['userid', 'friends', 'outgoing', 'incoming']
+		with open("csvfiles/userfriends.csv", 'w') as csvfile: # opening the users signed in file
+			writer = csv.DictWriter(csvfile, fieldnames = header) # writing a csv file to the dictionary
+			writer.writeheader() # writes the first row in the file as a header
+			for element in data:
+				writer.writerow(element) # writes each inputted data into a row of the csv file
 
 	def stay_signed_in(self): # define function to allow user to be signed in
 		os.system('clear')
