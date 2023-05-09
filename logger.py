@@ -259,10 +259,10 @@ What did your diet mainly consist of on this day?
 
 	print("\nYour calculated carbon footprint for this day is", totalcarbon, "kilograms.") # outputting the total carbon footprint for the user to see
 
-	if totalcarbon < 48.37:
+	if totalcarbon < 19.74:
 		print("\nYou did better than the average person!")
 	else:
-		print("\nYou did worse than the average person. Smh")
+		print("\nYou did worse than the average person.")
 
 	time.sleep(3)
 	return 0
@@ -347,21 +347,21 @@ Long flights are over 2500 miles.
 
 	mysettings = currentuser.return_settings() # accessing the user settings
 	
-	carbonhome = 0 # initializing carbonhome
+	home = 0 # initializing carbonhome
 	if mysettings['household'] == '1': # if the user's household has 1 person
-		carbonhome = carbonhome(1) # set their home carbon footprint to 982.8 kg/mo
+		home = carbonhome(1) # set their home carbon footprint to 982.8 kg/mo
 	elif mysettings['household'] == '2': # if the user's household has 2 people
-		carbonhome = carbonhome(2) # set their home carbon footprint to 926.1 kg/mo
+		home = carbonhome(2) # set their home carbon footprint to 926.1 kg/mo
 	elif mysettings['household'] == '3': # if the user's household has 3 people
-		carbonhome = carbonhome(3) # set their home carbon footprint to 869.4 kg/mo
+		home = carbonhome(3) # set their home carbon footprint to 869.4 kg/mo
 	elif mysettings['household'] == '4': # if the user's household has 4 people
-		carbonhome = carbonhome(4) # set their home carbon footprint to 812.7 kg/mo
+		home = carbonhome(4) # set their home carbon footprint to 812.7 kg/mo
 	elif mysettings['household'] == '5': # if the user's household has 5 people
-		carbonhome = carbonhome(5) # set their home carbon footprint to 756.0 kg/mo
+		home = carbonhome(5) # set their home carbon footprint to 756.0 kg/mo
 	elif mysettings['household'] == '6': # if the user's household has 6 or more people
-		carbonhome = carbonhome(6) # set their home carbon footprint to 699.3 kg/mo
+		home = carbonhome(6) # set their home carbon footprint to 699.3 kg/mo
 
-	totalcarbon = carbonflight + carbonhome # calculating the total carbon footprint by adding the carbon emitted from flights and home
+	totalcarbon = carbonflight + home # calculating the total carbon footprint by adding the carbon emitted from flights and home
 	
 
 	mydict = {
@@ -370,7 +370,7 @@ Long flights are over 2500 miles.
 		'mediumflights': str(medflight),
 		'longflights': str(longflight),
 		'carbonflight': str(carbonflight),
-		'carbonhome': str(carbonhome),
+		'carbonhome': str(home),
 		'totalcarbon': str(totalcarbon)
 			} # listing data from dictionary
 
@@ -385,10 +385,10 @@ Long flights are over 2500 miles.
 
 	print("\nYour calculated carbon footprint for this month is", totalcarbon, "kilograms.") # outputting the total carbon footprint for the user to see
 
-	if totalcarbon < 1471.15:
+	if totalcarbon < 1428.3:
 		print("\nYou did better than the average person!")
 	else:
-		print("\nYou did worse than the average person. Smh")
+		print("\nYou did worse than the average person.")
 	
 	time.sleep(3)
 	return 0
@@ -436,10 +436,10 @@ Enter the date again (MM/DD/YYYY): ''') # telling user to correct the format of 
 								print("- Miles traveled using public transportation on this day: " + element['publicmiles'] + " miles.")
 							if element['ownmiles'] != '0':
 								print("- Miles driven on their own vehicle on this day: " + element['ownmiles'] + " miles.")
-							print(f'''- What their diet consisted of today: {element['diettype']} kilograms.
-	- Carbon dioxide emitted from food today: {element['carbondiet']} kilograms.
-	- Carbon dioxide emitted transportation today: {element['carbongas']} kilograms.
-	- Total carbon dioxide emitted today: {element['totalcarbon']} kilograms.''')
+							print(f'''- What their diet consisted of today: {element['diettype']}.
+- Carbon dioxide emitted from food today: {element['carbondiet']} kilograms.
+- Carbon dioxide emitted transportation today: {element['carbongas']} kilograms.
+- Total carbon dioxide emitted today: {element['totalcarbon']} kilograms.''')
 							break
 					if found == True:
 						break
@@ -511,20 +511,20 @@ Enter their username: ''')
 				data = list(csv.DictReader(file, delimiter=",")) # accessing the data under the file
 				file.close() # closing the file
 				os.system('clear')
-				print("\nHere's today's data for your friend, " + userfriendsname + ":\n" )
 				found2 = False
 				for item in data:
 					if item['userid'] == friendsID:
+						print("\nHere's today's data for your friend, " + userfriendsname + ":\n" )
 						found2 = True
 						if item['publicmiles'] != '0':
 							print("- Miles traveled using public transportation today: " + item['publicmiles'] + " miles.")
 						if item['ownmiles'] != '0':
 							print("- Miles driven on their own vehicle today: " + item['ownmiles'] + " miles.")
-						print(f'''- What their diet consisted of today: {item['diettype']} kilograms.
+						print(f'''- What their diet consisted of today: {item['diettype']}.
 - Carbon dioxide emitted from food today: {item['carbondiet']} kilograms.
 - Carbon dioxide emitted transportation today: {item['carbongas']} kilograms.
 - Total carbon dioxide emitted today: {item['totalcarbon']} kilograms.''')
-				if found == False:
+				if found2 == False:
 					print("Your friend has not logged their data today.")
 				print('''
 What would you like to do now?

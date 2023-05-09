@@ -512,15 +512,15 @@ Enter another username or 'done': ''')
 							self.__friends.append(person)
 							self.__incoming.remove(person)
 
-							friends_str = '_'.join(self.__friends)
-							incoming_str = '_'.join(self.__incoming)
-							outgoing_str = '_'.join(self.__outgoing)
+							friends_str2 = '_'.join(self.__friends)
+							incoming_str2 = '_'.join(self.__incoming)
+							outgoing_str2 = '_'.join(self.__outgoing)
 
 							incoming_entry = {
 								'userid': self.__userid,
-								'friends': friends_str,
-								'outgoing': outgoing_str,
-								'incoming': incoming_str 
+								'friends': friends_str2,
+								'outgoing': outgoing_str2,
+								'incoming': incoming_str2 
 							}
 							
 							data.append(incoming_entry)
